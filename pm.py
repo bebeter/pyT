@@ -11,6 +11,7 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
 from keras.layers import Activation
+import time
 
 # convert series to supervised learning
 def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
@@ -36,7 +37,7 @@ def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
         agg.dropna(inplace=True)
     return agg
 
-
+s_time = time.time()
 # load dataset
 dataset = read_csv('pollution.csv', header=0, index_col=0)
 values = dataset.values
@@ -57,8 +58,8 @@ print(reframed.head())
 # split into train and test sets
 values = reframed.values
 n_train_hours = 365 * 24
-test = values[:n_train_hours, :]
-train = values[n_train_hours:, :]
+train = values[:n_train_hours, :]
+test = values[n_train_hours:, :]
 # split into input and outputs
 train_X, train_y = train[:, :-1], train[:, -1]
 test_X, test_y = test[:, :-1], test[:, -1]
@@ -98,7 +99,9 @@ inv_y = inv_y[:, 0]
 rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
 print('Test RMSE: %.3f' % rmse)
 
-
+e_time = time.time()
+print("doData use {:.5}s".format(e_time - s_time))
+# doData use 30.55s
 
 
 #https://machinelearningmastery.com/multivariate-time-series-forecasting-lstms-keras/
