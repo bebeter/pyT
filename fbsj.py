@@ -6,9 +6,7 @@ from pandas import read_csv
 
 
 import socket
-from pyquery import PyQuery as pq
-from lxml import etree
-import urllib2
+
 import re
 import json
 
@@ -17,20 +15,16 @@ import sys
 import urllib
 import time
 import os
-from selenium import webdriver
-from selenium.webdriver.common.action_chains import  ActionChains
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+
 import sys
-reload(sys)
-sys.setdefaultencoding( "GBK" )
+
 
 
 
 
 fn = r"d:\603888.csv"
 f = open(fn)
-print "\n\n-----------------------------------"
+print ("\n\n-----------------------------------")
 
 #f2 = r"d:\fd.sql"
 #fw = open(f2,"w")
