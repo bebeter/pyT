@@ -156,6 +156,7 @@ def deal_gp_fb(data_file, rq, stk_code):
                 buy_dics[buyid]['is_continue'] = 1
             else:
                 buy_dics[buyid]['is_continue_break'] = 1
+                buy_dics[buyid]['is_continue'] = 0
 
             buy_dics[buyid]['max_id'] = TranID
 
@@ -166,6 +167,8 @@ def deal_gp_fb(data_file, rq, stk_code):
                 buy_dics[buyid]['max_price'] = Price
                 buy_dics[buyid]['price_count'] = buy_dics[buyid]['price_count'] + 1  # 不太好确定
 
+            buy_dics[buyid]['end_time'] = Time
+
             if Volume < buy_dics[buyid]['min_vol']:
                 buy_dics[buyid]['min_vol'] = Volume
             if Volume > buy_dics[buyid]['max_vol']:
@@ -174,14 +177,14 @@ def deal_gp_fb(data_file, rq, stk_code):
             buy_dics[buyid]['id_count'] = buy_dics[buyid]['id_count'] + 1
 
             buy_dics[buyid]['sum_vol'] = buy_dics[buyid]['sum_vol'] + Volume
-            buy_dics[buyid]['avg_vol'] = buy_dics[buyid]['sum_vol'] / buy_dics[buyid]['id_count']
+            buy_dics[buyid]['avg_vol'] = round(buy_dics[buyid]['sum_vol'] / buy_dics[buyid]['id_count'],2)
 
             if SaleOrderVolume > buy_dics[buyid]['max_sale_vol']:
                 buy_dics[buyid]['max_sale_vol'] = SaleOrderVolume
             if BuyOrderVolume > buy_dics[buyid]['max_buy_vol']:
                 buy_dics[buyid]['max_buy_vol'] = BuyOrderVolume
 
-            if buy_dics[buyid]['id_count'] > 1 and buy_dics[buyid]['is_continue'] == 1 and Price > last_row_price:
+            if  (buy_dics[buyid]['id_count'] > 1 and buy_dics[buyid]['is_continue'] == 1 and Price == last_row_price) or Price > last_row_price:
                 buy_dics[buyid]['tran_type2'] =  '推动追买'
             else:
                 buy_dics[buyid]['tran_type1'] = '普通挂买'
@@ -193,7 +196,7 @@ def deal_gp_fb(data_file, rq, stk_code):
 
             buy_dics[buyid]['min_id'] = TranID
             buy_dics[buyid]['max_id'] = TranID
-            buy_dics[buyid]['is_continue'] = -1
+            buy_dics[buyid]['is_continue'] = -1   #第一单
             buy_dics[buyid]['is_continue_break'] = 0
 
 
@@ -236,6 +239,7 @@ def deal_gp_fb(data_file, rq, stk_code):
                 sell_dics[saleid]['is_continue'] = 1
             else:
                 sell_dics[saleid]['is_continue_break'] = 1
+                sell_dics[saleid]['is_continue'] = 0
 
             sell_dics[saleid]['max_id'] = TranID
 
@@ -251,17 +255,19 @@ def deal_gp_fb(data_file, rq, stk_code):
             if Volume > sell_dics[saleid]['max_vol']:
                 sell_dics[saleid]['max_vol'] = Volume
 
-            sell_dics[saleid]['id_count'] = sell_dics[saleid]['id_count'] + 1
+            sell_dics[saleid]['id_count'] = sell_dics[saleid]['id_count'] + 1  #笔数
+
+            sell_dics[saleid]['end_time'] = Time
 
             sell_dics[saleid]['sum_vol'] = sell_dics[saleid]['sum_vol'] + Volume
-            sell_dics[saleid]['avg_vol'] = sell_dics[saleid]['sum_vol'] / sell_dics[saleid]['id_count']
+            sell_dics[saleid]['avg_vol'] = round(sell_dics[saleid]['sum_vol'] / sell_dics[saleid]['id_count'],2)
 
             if SaleOrderVolume > sell_dics[saleid]['max_sale_vol']:
                 sell_dics[saleid]['max_sale_vol'] = SaleOrderVolume
             if BuyOrderVolume > sell_dics[saleid]['max_buy_vol']:
                 sell_dics[saleid]['max_buy_vol'] = BuyOrderVolume
 
-            if sell_dics[saleid]['id_count'] > 1 and sell_dics[saleid]['is_continue'] == 1 and Price < last_row_price:
+            if ( sell_dics[saleid]['is_continue'] == 1 and Price == last_row_price) or  Price < last_row_price:
                 sell_dics[saleid]['tran_type2'] = '推动追卖,'
             else:
                 sell_dics[saleid]['tran_type1'] = '普通挂卖,'
@@ -273,7 +279,7 @@ def deal_gp_fb(data_file, rq, stk_code):
 
             sell_dics[saleid]['min_id'] = TranID
             sell_dics[saleid]['max_id'] = TranID
-            sell_dics[saleid]['is_continue'] = -1
+            sell_dics[saleid]['is_continue'] = -1 #第一单
             sell_dics[saleid]['is_continue_break'] = 0
 
             sell_dics[saleid]['min_price'] = Price
@@ -316,7 +322,7 @@ def deal_gp_fb(data_file, rq, stk_code):
         else:
             sum_sell = sum_sell + row['Volume']
 
-    print("sum_buy:", sum_buy, "sum_sell:", sum_sell)
+    #print("sum_buy:", sum_buy, "sum_sell:", sum_sell)
 
 
 
@@ -338,7 +344,7 @@ def deal_gp_fb(data_file, rq, stk_code):
 def ceate_rows(my_dics):
     rows = []
     for key in my_dics.keys():
-        print(key, my_dics[key])
+        #print(key, my_dics[key])
 
         data_row = []
         count = 0
