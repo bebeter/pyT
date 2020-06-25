@@ -1,0 +1,43 @@
+Index: stu.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>GBK
+===================================================================
+--- stu.py	(date 1589004134032)
++++ stu.py	(date 1589004134032)
+@@ -0,0 +1,34 @@
++#!/usr/bin/env python
++#-*- coding: GBK -*-
++import numpy as np
++import pandas as pd
++
++
++def filtGain(stocks):
++    # 初始化参数信息
++    numStocks = len(stocks)
++    rankValue = []
++
++    # 计算涨跌幅
++    for security in stocks:
++        # 获取过去pastDay的指数值
++        stocksPrice = [1,3,4,7]
++        if len(stocksPrice)!=0:
++            # 计算涨跌幅
++            errCloseOpen = [1,2,3,5 ]
++            rankValue += errCloseOpen
++        else:
++            rankValue += [0]
++
++    # 根据周涨跌幅排名
++    filtStocks = {'code':stocks,'rankValue':rankValue}
++    filtStocks = pd.DataFrame(filtStocks)
++    filtStocks = filtStocks.sort('rankValue',ascending = False)
++    # 根据涨跌幅筛选
++    filtStocks = filtStocks.head(g.topK)
++    filtStocks = list(filtStocks['code'])
++
++    return filtStocks
++
++stocks= ["600012","600036"]
++filtGain(stocks)
+\ No newline at end of file

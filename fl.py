@@ -9,6 +9,7 @@ from matplotlib import pyplot
 
 
 
+
 # 生成虚拟数据
 x_train = np.random.random((100, 100, 100, 3))
 y_train = keras.utils.to_categorical(np.random.randint(10, size=(100, 1)), num_classes=10)
