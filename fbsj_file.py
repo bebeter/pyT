@@ -4,7 +4,9 @@ import os
 import glob
 
 import pandas as pd
-
+import time# 1. 获取时间元组
+struct_time = time.localtime()# 2. 转换字符串格式
+mi =(time.strftime('%Y%m%d%H%M%S',struct_time))
 
 # print type(os.listdir("."))
 # glob.glob('c:\\music\\_singles\\*.mp3')
@@ -39,11 +41,20 @@ def deal_gptj(data_file,rq,stk_code):
 
 # 192.168.1.8
 
+def getLastClose(rq,stk_code):
+    print(rq,stk_code)
+    return 32.32
+
+def getZt(close):
+
+    return  round(1.1*close,2)
 
 def deal_gp(data_file,rq,stk_code):
     f = open(data_file, "r")
     lines = f.readlines()
     line_count = 0
+
+
 
     # 打开数据库连接
     # db = MySQLdb.connect("192.168.1.8","root","root123","ts" )
@@ -108,6 +119,10 @@ def deal_dir(path):
 
 def deal_gp_fb(data_file, rq, stk_code):
     fn = data_file
+    lastClose = getLastClose(rq, stk_code)
+    zt_price = getZt(lastClose)
+
+
 
     df = pd.read_csv(fn, header=0) #, index_col=0
     print(df.head(5))
@@ -179,14 +194,21 @@ def deal_gp_fb(data_file, rq, stk_code):
             buy_dics[buyid]['sum_vol'] = buy_dics[buyid]['sum_vol'] + Volume
             buy_dics[buyid]['avg_vol'] = round(buy_dics[buyid]['sum_vol'] / buy_dics[buyid]['id_count'],2)
 
+
             if SaleOrderVolume > buy_dics[buyid]['max_sale_vol']:
                 buy_dics[buyid]['max_sale_vol'] = SaleOrderVolume
             if BuyOrderVolume > buy_dics[buyid]['max_buy_vol']:
                 buy_dics[buyid]['max_buy_vol'] = BuyOrderVolume
 
-            if  (buy_dics[buyid]['id_count'] > 1 and buy_dics[buyid]['is_continue'] == 1 and Price == last_row_price) or Price > last_row_price:
+            buy_dics[buyid]['amount'] = buy_dics[buyid]['amount'] + Price * Volume
+
+
+            if zt_price == Price:
+                buy_dics[buyid]['tran_type2'] = '推动追买'
+            elif  (buy_dics[buyid]['id_count'] > 1 and buy_dics[buyid]['is_continue'] == 1 and Price == last_row_price) or Price > last_row_price:
                 buy_dics[buyid]['tran_type2'] =  '推动追买'
             else:
+
                 buy_dics[buyid]['tran_type1'] = '普通挂买'
 
         else:
@@ -215,6 +237,8 @@ def deal_gp_fb(data_file, rq, stk_code):
             buy_dics[buyid]['max_sale_vol'] = SaleOrderVolume
             buy_dics[buyid]['max_buy_vol'] = BuyOrderVolume
 
+            buy_dics[buyid]['amount'] =  Price * Volume
+
             buy_dics[buyid]['id_count'] = 1
 
             buy_dics[buyid]['tran_type0'] = ''
@@ -222,7 +246,9 @@ def deal_gp_fb(data_file, rq, stk_code):
             buy_dics[buyid]['tran_type1'] = ''
             buy_dics[buyid]['tran_type2'] = ''
 
-            if  Price <= last_row_price:
+            if zt_price == Price:
+                buy_dics[buyid]['tran_type2'] = '推动追买'
+            elif  Price <= last_row_price:
                 buy_dics[buyid]['tran_type1'] = '普通挂买'
             elif Volume == BuyOrderVolume and Price > last_row_price:
                 buy_dics[buyid]['tran_type2'] = '推动追买'
@@ -267,7 +293,11 @@ def deal_gp_fb(data_file, rq, stk_code):
             if BuyOrderVolume > sell_dics[saleid]['max_buy_vol']:
                 sell_dics[saleid]['max_buy_vol'] = BuyOrderVolume
 
-            if ( sell_dics[saleid]['is_continue'] == 1 and Price == last_row_price) or  Price < last_row_price:
+            sell_dics[saleid]['amount'] = sell_dics[saleid]['amount'] + Price * Volume
+
+            if zt_price==Price:
+                    sell_dics[saleid]['tran_type2'] = '推动追卖'
+            elif ( sell_dics[saleid]['is_continue'] == 1 and Price == last_row_price) or  Price < last_row_price:
                 sell_dics[saleid]['tran_type2'] = '推动追卖,'
             else:
                 sell_dics[saleid]['tran_type1'] = '普通挂卖,'
@@ -297,14 +327,17 @@ def deal_gp_fb(data_file, rq, stk_code):
             sell_dics[saleid]['max_sale_vol'] = SaleOrderVolume
             sell_dics[saleid]['max_buy_vol'] = BuyOrderVolume
 
+            sell_dics[saleid]['amount']=Price*Volume
+
             sell_dics[saleid]['id_count'] = 1
 
             sell_dics[saleid]['tran_type0']=''
 
             sell_dics[saleid]['tran_type1']=''
             sell_dics[saleid]['tran_type2']=''
-
-            if  Price >= last_row_price:
+            if zt_price == Price:
+                sell_dics[saleid]['tran_type2'] = '推动追卖'
+            elif  Price >= last_row_price:
                 sell_dics[saleid]['tran_type1'] = '普通挂卖,'
             elif Volume == BuyOrderVolume and Price < last_row_price:
                 sell_dics[saleid]['tran_type2'] = '推动追卖,'
@@ -329,16 +362,16 @@ def deal_gp_fb(data_file, rq, stk_code):
     rows = ceate_rows(sell_dics)
     df = pd.DataFrame(rows, columns=['id', 'is_jj', 'min_id', 'max_id', 'is_continue', 'is_continue_break', 'min_price',
                                      'max_price', 'price_count', 'start_time', 'end_time', 'max_vol', 'min_vol',
-                                     'sum_vol', 'avg_vol', 'max_sale_vol', 'max_buy_vol', 'id_count', 'tran_type0',
+                                     'sum_vol', 'avg_vol', 'max_sale_vol', 'max_buy_vol','amount','id_count', 'tran_type0',
                                      'tran_type1', 'tran_type2'])
-    df.to_csv("sale.csv")
+    df.to_csv("sale"+mi+".csv")
 
     rows = ceate_rows(buy_dics)
     df = pd.DataFrame(rows, columns=['id', 'is_jj', 'min_id', 'max_id', 'is_continue', 'is_continue_break', 'min_price',
                                      'max_price', 'price_count', 'start_time', 'end_time', 'max_vol', 'min_vol',
-                                     'sum_vol', 'avg_vol', 'max_sale_vol', 'max_buy_vol', 'id_count', 'tran_type0',
+                                     'sum_vol', 'avg_vol', 'max_sale_vol', 'max_buy_vol','amount', 'id_count', 'tran_type0',
                                      'tran_type1', 'tran_type2'])
-    df.to_csv("buy.csv")
+    df.to_csv("buy_"+mi+".csv")
 
 
 def ceate_rows(my_dics):

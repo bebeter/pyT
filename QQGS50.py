@@ -3,21 +3,31 @@
 #50
 zs=[]
 
-for i  in range(2450,3000,50):
+for i  in range(2350,3300,50):
     zs.append(i)
 print (zs)
 
 gou=[]
 gu=[]
-gou.append(10002469)
-for i  in range(10002433,10002442):
+gou.append(10002421)
+gou.append(10002401)
+gou.append(10002402)
+for i  in range(10002291,10002294):
     gou.append(i)
-gou.append(10002471)
+for i  in range(10002083,10002091):
+    gou.append(i)
+gou.append(10002107)
 
-gu.append(10002470)
-for i  in range(10002442,10002451):
+gu.append(10002422)
+gu.append(10002403)
+gu.append(10002404)
+
+for i  in range(10002295,10002298):
     gu.append(i)
-gu.append(10002472)
+for i in range(10002092, 10002100):
+    gu.append(i)
+
+gu.append(10002108)
 
 print (gou)
 print (gu)
