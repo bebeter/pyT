@@ -2,7 +2,7 @@
 import re, string
 import os
 import glob
-
+import math
 import pandas as pd
 import time# 1. 获取时间元组
 struct_time = time.localtime()# 2. 转换字符串格式
@@ -152,6 +152,9 @@ def deal_gp_fb(data_file, rq, stk_code):
         saleid = row['SaleOrderID']
         buyid = row['BuyOrderID']
 
+        if(buyid==809605):
+            print(buyid)
+
         TranID = row['TranID']
         Time = row['Time']
         Price = row['Price']
@@ -205,8 +208,12 @@ def deal_gp_fb(data_file, rq, stk_code):
 
             if zt_price == Price:
                 buy_dics[buyid]['tran_type2'] = '推动追买'
-            elif  (buy_dics[buyid]['id_count'] > 1 and buy_dics[buyid]['is_continue'] == 1 and Price == last_row_price) or Price > last_row_price:
-                buy_dics[buyid]['tran_type2'] =  '推动追买'
+            elif  (buy_dics[buyid]['id_count'] > 1 and     Price == last_row_price):
+                if (buy_dics[buyid]['tran_type1'] == '普通挂买'):
+                     pass
+                # 如果已经是推动 就往下执行
+            elif ( Price > last_row_price ):
+                 buy_dics[buyid]['tran_type2'] = '推动追买'
             else:
 
                 buy_dics[buyid]['tran_type1'] = '普通挂买'
@@ -259,7 +266,7 @@ def deal_gp_fb(data_file, rq, stk_code):
                 #print(TranID)
 
         if saleid in sell_dics:
-            sell_dics[saleid]['buyid'] = saleid
+            sell_dics[saleid]['saleid'] = saleid
             sell_dics[saleid]['is_jj'] = is_jj
             if TranID == sell_dics[saleid]['max_id'] + 1:
                 sell_dics[saleid]['is_continue'] = 1
@@ -297,14 +304,18 @@ def deal_gp_fb(data_file, rq, stk_code):
 
             if zt_price==Price:
                     sell_dics[saleid]['tran_type2'] = '推动追卖'
-            elif ( sell_dics[saleid]['is_continue'] == 1 and Price == last_row_price) or  Price < last_row_price:
-                sell_dics[saleid]['tran_type2'] = '推动追卖,'
+            elif ( sell_dics[saleid]['is_continue'] == 1 and Price == last_row_price):
+                if sell_dics[saleid]['tran_type1'] == '普通挂买':
+                    pass
+            elif Price < last_row_price:
+                sell_dics[saleid]['tran_type2'] = '推动追卖'
+
             else:
                 sell_dics[saleid]['tran_type1'] = '普通挂卖,'
 
         else:
             sell_dics[saleid]={}
-            sell_dics[saleid]['buyid'] = saleid
+            sell_dics[saleid]['saleid'] = saleid
             sell_dics[saleid]['is_jj'] = is_jj
 
             sell_dics[saleid]['min_id'] = TranID
@@ -365,7 +376,8 @@ def deal_gp_fb(data_file, rq, stk_code):
                                      'sum_vol', 'avg_vol', 'max_sale_vol', 'max_buy_vol','amount','id_count', 'tran_type0',
                                      'tran_type1', 'tran_type2'])
     df.to_csv("sale"+mi+".csv")
-
+    b=df[df["tran_type2"]!=""]["amount"].sum()/10000
+    print("卖单：",(b))
     rows = ceate_rows(buy_dics)
     df = pd.DataFrame(rows, columns=['id', 'is_jj', 'min_id', 'max_id', 'is_continue', 'is_continue_break', 'min_price',
                                      'max_price', 'price_count', 'start_time', 'end_time', 'max_vol', 'min_vol',
@@ -373,7 +385,13 @@ def deal_gp_fb(data_file, rq, stk_code):
                                      'tran_type1', 'tran_type2'])
     df.to_csv("buy_"+mi+".csv")
 
-
+    df["start_time"]=df["start_time"].apply(lambda x: x[0:-3])
+    b = df.groupby("start_time")["amount"].sum() / 10000
+    print((b))
+    b=df.groupby("tran_type2")["amount"].sum()/10000
+    print((b))
+    b=df[df["tran_type2"]!=""]["amount"].sum()/10000
+    print((b))
 def ceate_rows(my_dics):
     rows = []
     for key in my_dics.keys():
