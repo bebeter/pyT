@@ -23,7 +23,8 @@ def deal_gptj(data_file,rq,stk_code):
     f = open(data_file, "r")
     lines = f.readlines()
     line_count = 0
-    f2 = open(r"c:/data/"+rq+"/"+stk_code+".txt", "a")
+    #C:\l2data\202007\2020-07-13
+    f2 = open(r"c:/l2data/202007/"+rq+"/"+stk_code+".csv", "a")
     for line in lines:
         line_count = line_count + 1
         if line_count == 1:
@@ -414,11 +415,11 @@ def ceate_rows(my_dics):
 
 
 def main():
-    rq = '2020-01-15'
-    stk_code = '603888'
+    rq = '2020-07-13'
+    stk_code = '002074'
 
-    path = r"C:/data/csv/" + rq + "/"
-
+    #path = r"C:/data/csv/" + rq + "/"
+    path = r"C:/l2data/202007/" + rq + "/"
 
     data_file = path+ stk_code + ".csv"
     #deal_gp(data_file,rq,stk_code)
