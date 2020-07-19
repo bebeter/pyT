@@ -185,6 +185,8 @@ def deal_gp_fb(data_file, rq, stk_code):
             if Price > buy_dics[buyid]['max_price']:
                 buy_dics[buyid]['max_price'] = Price
                 buy_dics[buyid]['price_count'] = buy_dics[buyid]['price_count'] + 1  # 不太好确定
+            if  buy_dics[buyid]['prices'].find(str(Price))==-1:
+                buy_dics[buyid]['prices'] = buy_dics[buyid]['prices']+","+str(Price)
 
             buy_dics[buyid]['end_time'] = Time
 
@@ -232,6 +234,9 @@ def deal_gp_fb(data_file, rq, stk_code):
 
             buy_dics[buyid]['min_price'] = Price
             buy_dics[buyid]['max_price'] = Price
+
+            buy_dics[buyid]['prices'] = str(Price)
+
             buy_dics[buyid]['price_count'] = 1
 
             buy_dics[buyid]['start_time'] = Time
@@ -279,10 +284,14 @@ def deal_gp_fb(data_file, rq, stk_code):
 
             if Price < sell_dics[saleid]['min_price']:
                 sell_dics[saleid]['min_price'] = Price
+                sell_dics[saleid]['price_count'] = sell_dics[saleid]['price_count'] + 1  # 不太好确定
 
             if Price > sell_dics[saleid]['max_price']:
                 sell_dics[saleid]['max_price'] = Price
-                sell_dics[saleid]['price_count'] = sell_dics[saleid]['price_count'] + 1  # 不太好确定
+
+            if sell_dics[saleid]['prices'].find(str(Price)) ==-1:
+                    sell_dics[saleid]['prices'] = sell_dics[saleid]['prices'] + "," +str(Price)
+
 
             if Volume < sell_dics[saleid]['min_vol']:
                 sell_dics[saleid]['min_vol'] = Volume
@@ -326,6 +335,9 @@ def deal_gp_fb(data_file, rq, stk_code):
 
             sell_dics[saleid]['min_price'] = Price
             sell_dics[saleid]['max_price'] = Price
+
+            sell_dics[saleid]['prices'] = str(Price)
+
             sell_dics[saleid]['price_count'] = 1
 
             sell_dics[saleid]['start_time'] = Time
@@ -350,11 +362,11 @@ def deal_gp_fb(data_file, rq, stk_code):
             if zt_price == Price:
                 sell_dics[saleid]['tran_type2'] = '推动追卖'
             elif  Price >= last_row_price:
-                sell_dics[saleid]['tran_type1'] = '普通挂卖,'
+                sell_dics[saleid]['tran_type1'] = '普通挂卖'
             elif Volume == BuyOrderVolume and Price < last_row_price:
-                sell_dics[saleid]['tran_type2'] = '推动追卖,'
+                sell_dics[saleid]['tran_type2'] = '推动追卖'
             elif Volume < BuyOrderVolume and Price < last_row_price:
-                sell_dics[saleid]['tran_type2'] = '推动追卖,'
+                sell_dics[saleid]['tran_type2'] = '推动追卖'
             else:
                 sell_dics[saleid]['tran_type0'] = '卖,'
                 #print(TranID)
@@ -372,27 +384,58 @@ def deal_gp_fb(data_file, rq, stk_code):
 
 
     rows = ceate_rows(sell_dics)
-    df = pd.DataFrame(rows, columns=['id', 'is_jj', 'min_id', 'max_id', 'is_continue', 'is_continue_break', 'min_price',
-                                     'max_price', 'price_count', 'start_time', 'end_time', 'max_vol', 'min_vol',
+    df_sale = pd.DataFrame(rows, columns=['id', 'is_jj', 'min_id', 'max_id', 'is_continue', 'is_continue_break', 'min_price',
+                                     'max_price','prices', 'price_count', 'start_time', 'end_time', 'max_vol', 'min_vol',
                                      'sum_vol', 'avg_vol', 'max_sale_vol', 'max_buy_vol','amount','id_count', 'tran_type0',
                                      'tran_type1', 'tran_type2'])
-    df.to_csv("sale"+mi+".csv")
-    b=df[df["tran_type2"]!=""]["amount"].sum()/10000
-    print("卖单：",(b))
+    #合并买卖类型到新的列
+    df_sale['tran_type'] = df_sale.apply(lambda row: row.tran_type2 if  row.tran_type2 =='推动追卖' else '普通挂卖', axis=1)
+    df_sale.to_csv("sale"+mi+".csv")
+
+    #b = df.groupby("start_time")["amount"].sum() / 10000
+
+    df1=df_sale[df_sale["amount"]>=200000]#df["tran_type2"]!="" &
+
+    b= df_sale["amount"].sum()/10000
+    print("推动卖单：",(b))
+
+    df3 = df_sale[(df_sale.amount > 200000) & (df_sale.tran_type2 != '')]
+    sell_dd_hj= df3["amount"].sum() / 10000
+
+
     rows = ceate_rows(buy_dics)
-    df = pd.DataFrame(rows, columns=['id', 'is_jj', 'min_id', 'max_id', 'is_continue', 'is_continue_break', 'min_price',
-                                     'max_price', 'price_count', 'start_time', 'end_time', 'max_vol', 'min_vol',
+    df_buy = pd.DataFrame(rows, columns=['id', 'is_jj', 'min_id', 'max_id', 'is_continue', 'is_continue_break', 'min_price',
+                                     'max_price'  ,'prices','price_count', 'start_time', 'end_time', 'max_vol', 'min_vol',
                                      'sum_vol', 'avg_vol', 'max_sale_vol', 'max_buy_vol','amount', 'id_count', 'tran_type0',
                                      'tran_type1', 'tran_type2'])
-    df.to_csv("buy_"+mi+".csv")
+    df_buy['tran_type'] = df_buy.apply(lambda row: row.tran_type2 if row.tran_type2 == '推动追买' else '普通挂买', axis=1)
 
-    df["start_time"]=df["start_time"].apply(lambda x: x[0:-3])
-    b = df.groupby("start_time")["amount"].sum() / 10000
+    df_buy.to_csv("buy_"+mi+".csv")
+
+    df_buy["start_time"]=df_buy["start_time"].apply(lambda x: x[0:-3])
+    b = df_buy.groupby("start_time")["amount"].sum() / 10000
     print((b))
-    b=df.groupby("tran_type2")["amount"].sum()/10000
+    b=df_buy.groupby("tran_type2")["amount"].sum()/10000
     print((b))
-    b=df[df["tran_type2"]!=""]["amount"].sum()/10000
-    print((b))
+    df2=df_buy[df_buy["amount"]>=200000]  #df["tran_type2"]!="" &
+    b=df2["amount"].sum()/10000
+
+
+    print("推动买单：",(b))
+
+    df3 = df_buy[(df_buy.amount > 200000) & (df_buy.tran_type2 != '')]
+    buy_dd_hj = df3["amount"].sum() / 10000
+
+    print("买单统计：\n",df_buy["amount"].describe())
+
+    print("卖单统计：\n", df_sale["amount"].describe())
+
+    print("推动大单买合计：",buy_dd_hj)
+    print("推动大单卖合计：", sell_dd_hj)
+
+    print("推动大单净值合计：",( buy_dd_hj - sell_dd_hj) )
+
+
 def ceate_rows(my_dics):
     rows = []
     for key in my_dics.keys():
