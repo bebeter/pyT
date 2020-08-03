@@ -46,6 +46,15 @@ def deal_gp_fb(data_file, rq, stk_code):
 
         #print(index,row)
 
+        #卖方筹码衰减
+        can_sell_price = []
+        can_sell_rq = []
+
+        #如果是第一天
+        #近期的赋值 大的概率抽奖 卖出
+
+
+
 
         #买方筹码累计
 
@@ -58,9 +67,7 @@ def deal_gp_fb(data_file, rq, stk_code):
             today_dics[Price]={}
             today_dics[Price][rq] =  Volume
 
-        #卖方筹码衰减
-        can_sell_price = []
-        can_sell_rq = []
+
 
 
         can_sell_price = today_dics.keys()

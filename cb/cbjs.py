@@ -113,7 +113,7 @@ def fen_Gu():
        all_account[x].money-=fxj*500
 def sum_gu():
     sum=0
-    print gdzs
+    print (gdzs)
     for i in range(0,gdzs):
         #if i<15:
         #  print "持股 ",i,all_account[i].amount
@@ -122,7 +122,7 @@ def sum_gu():
         #if int(float(all_account[i].amount))>500:
         #    print i,int(float(all_account[i].amount))
         sum+=int(float(all_account[i].amount))
-    print  "股本合计：", sum
+    print  ("股本合计：", sum)
 
 
 
