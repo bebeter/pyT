@@ -12,9 +12,9 @@ def random_weight(weight_data):
             ret = k
             break
     return ret
-weight_data = {'a': 10, 'b': 15, 'c': 50}
-count=[0,0,0]
-for _ in range(10000):
+weight_data = {'a': 10, 'b': 12, 'c': 50,'d':11}
+count=[0,0,0,0]
+for _ in range(100000):
    ch  = random_weight(weight_data)
    print (ch)
    if ch=='a' :
@@ -23,4 +23,6 @@ for _ in range(10000):
        count[1] = count[1] + 1
    if ch == 'c':
        count[2] = count[2] + 1
+   if ch == 'd':
+           count[3] = count[3] + 1
 print (count)
