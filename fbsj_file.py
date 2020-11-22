@@ -394,12 +394,12 @@ def deal_gp_fb(data_file, rq, stk_code):
 
     #b = df.groupby("start_time")["amount"].sum() / 10000
 
-    df1=df_sale[df_sale["amount"]>=200000]#df["tran_type2"]!="" &
+    df1=df_sale[df_sale["amount"]>=100000]#df["tran_type2"]!="" &
 
     b= df_sale["amount"].sum()/10000
     print("推动卖单：",(b))
 
-    df3 = df_sale[(df_sale.amount > 200000) & (df_sale.tran_type2 != '')]
+    df3 = df_sale[(df_sale.amount > 100000) & (df_sale.tran_type2 != '')]
     sell_dd_hj= df3["amount"].sum() / 10000
 
 
@@ -417,13 +417,13 @@ def deal_gp_fb(data_file, rq, stk_code):
     print((b))
     b=df_buy.groupby("tran_type2")["amount"].sum()/10000
     print((b))
-    df2=df_buy[df_buy["amount"]>=200000]  #df["tran_type2"]!="" &
+    df2=df_buy[df_buy["amount"]>=100000]  #df["tran_type2"]!="" &
     b=df2["amount"].sum()/10000
 
 
     print("推动买单：",(b))
 
-    df3 = df_buy[(df_buy.amount > 200000) & (df_buy.tran_type2 != '')]
+    df3 = df_buy[(df_buy.amount > 100000) & (df_buy.tran_type2 != '')]
     buy_dd_hj = df3["amount"].sum() / 10000
 
     print("买单统计：\n",df_buy["amount"].describe())
@@ -458,15 +458,15 @@ def ceate_rows(my_dics):
 
 
 def main():
-    rq = '2020-07-13'
-    stk_code = '002074'
+    rq = '2020-11-07'
+    stk_code = '600733'
+    fn = r"C:\Users\sun\Documents\600733.csv"
 
-    #path = r"C:/data/csv/" + rq + "/"
     path = r"C:/l2data/202007/" + rq + "/"
 
     data_file = path+ stk_code + ".csv"
     #deal_gp(data_file,rq,stk_code)
-
+    data_file = r"C:\Users\sun\Documents\600733.csv"
     deal_gp_fb(data_file, rq, stk_code)
 
 
