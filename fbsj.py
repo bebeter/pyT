@@ -22,7 +22,7 @@ import sys
 
 
 
-fn = r"d:\603888.csv"
+fn = r"C:\Users\sun\Documents\600733.csv"
 f = open(fn)
 print ("\n\n-----------------------------------")
 
