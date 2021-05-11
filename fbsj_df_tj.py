@@ -142,7 +142,7 @@ def deal_gp_fb(data_file, rq, stk_code):
     print(sale_count[sale_count['Price']>1])  #成交了两个价格的卖单
     '''
     df['vol']=df['Price']*df['Volume']
-    sale_df = df.groupby('SaleOrderID').agg({'Time':[('time_min','min'),('time_max','max')],'vol':'sum','Price': pd.Series.nunique,'SaleOrderVolume': 'max','Volume':['sum','mean','max'],'BuyOrderID':'count'})
+    sale_df = df.groupby('SaleOrderID').agg({'Time':[('time_min','min'),('time_max','max')],'vol':'sum','Price': [pd.Series.nunique,'mean'],'SaleOrderVolume': 'max','Volume':['sum','mean','max'],'BuyOrderID':'count'}).sort_values(by=[('Time','time_min')],ascending=[True])
     print(sale_df)  #成交了两个价格的卖单"大于10w股的主动卖单："+
     #print(sale_df['Time']['time_min'])
     #print(sale_df.iloc[:,3:6])   #['Volume']['sum'>100000]
@@ -215,7 +215,8 @@ def deal_gp_fb(data_file, rq, stk_code):
 
 
 def main():
-    rq = '2021-05-06'
+    start =  time.perf_counter()
+    rq = '2021-05-11'
     stk_code = '600733'
     fn = r"C:\Users\sun\Documents\2020-11-27\600733.csv"
 
@@ -225,7 +226,8 @@ def main():
     #deal_gp(data_file,rq,stk_code)
     #data_file = r"C:\Users\sun\Documents\2020-11-27\600733.csv"
     deal_gp_fb(data_file, rq, stk_code)
-
+    end = time.perf_counter()
+    print ("time:   "+str(end-start))
 
 
 
