@@ -191,11 +191,11 @@ def init(context):
     X_Matrix=pd.merge(result,StockReturns,left_index=True,right_index=True,how='inner')
 
     #Train and Test data
-    X=X_Matrix[0:300][result.columns]
-    y=X_Matrix[0:300]['return']
+    X=X_Matrix[0:500][result.columns]
+    y=X_Matrix[0:500]['return']
     #valid data
-    x_valid=X_Matrix[300:][result.columns]
-    y_valid_return=X_Matrix[300:]['return']
+    x_valid=X_Matrix[500:][result.columns]
+    y_valid_return=X_Matrix[500:]['return']
 
 
     from sklearn.model_selection import train_test_split
