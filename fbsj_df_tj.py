@@ -216,7 +216,7 @@ def deal_gp_fb(data_file, rq, stk_code):
 
 def main():
     start =  time.perf_counter()
-    rq = '2021-05-11'
+    rq = '2021-05-12'
     stk_code = '600733'
     fn = r"C:\Users\sun\Documents\2020-11-27\600733.csv"
 
