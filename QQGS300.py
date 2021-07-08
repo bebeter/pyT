@@ -3,23 +3,24 @@
 #50
 zs=[]
 
-for i  in range(3300,4400,100):
+for i  in range(3800,5000,100):  #range 第二个数字 不算
     zs.append(i)
 print (zs)
 
 gou=[]
 gu=[]
 
-for i  in range(10002451,10002460):
+for i  in range(10002603,10002612):#range 第二个数字 不算
     gou.append(i)
-gou.append(10002473)
-gou.append(10002519)
+gou.append(10002631)
+gou.append(10002647)
+gou.append(10002663)
 
-
-for i  in range(10002460,10002469):
+for i  in range(10002612,10002621):#range 第二个数字 不算
     gu.append(i)
-gu.append(10002474)
-gu.append(10002520)
+gu.append(10002632)
+gu.append(10002648)
+gu.append(10002664)
 
 print (gou)
 print (gu)

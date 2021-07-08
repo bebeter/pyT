@@ -163,8 +163,7 @@ def deal_gp_fb(data_file, rq, stk_code):
         SaleOrderVolume = row['SaleOrderVolume']
         BuyOrderVolume = row['BuyOrderVolume']
 
-        is_jj = 0  # ÊÇ·ñ¾º¼Û
-
+        is_jj = 0  # ÊÇ·ñ
         if Time == '9:25:00' or Time == '09:25:00':
             is_jj = 1
 
@@ -460,13 +459,13 @@ def ceate_rows(my_dics):
 def main():
     rq = '2020-11-07'
     stk_code = '600733'
-    fn = r"C:\Users\sun\Documents\600733.csv"
+    fn = r"C:\Users\sun\Documents\2020-11-27\600733.csv"
 
     path = r"C:/l2data/202007/" + rq + "/"
 
     data_file = path+ stk_code + ".csv"
     #deal_gp(data_file,rq,stk_code)
-    data_file = r"C:\Users\sun\Documents\600733.csv"
+    data_file = r"C:\Users\sun\Documents\2020-11-27\600733.csv"
     deal_gp_fb(data_file, rq, stk_code)
 
 
