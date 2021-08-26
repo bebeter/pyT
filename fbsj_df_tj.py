@@ -110,14 +110,14 @@ def deal_dir(path):
     global name, data_file
     print(path)
     index = 100
-    for i in glob.glob(path):
+    for i in glob.glob(path+"*.csv"):
         index = index + 1
-        name = i[-10:-4]
+        name = i[-10:]
         print(name)
-        if index >= 103:
-            break
+        #if index >= 103:
+        #    break
         data_file = i
-        deal_gp(data_file)
+        #deal_gp(data_file)
 
 
 
@@ -250,4 +250,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    #main()
+    rq = '2021-07-09'
+    stk_code = '601156'
+    path = r"C:/Users/sun/Documents/" + rq + "/" + stk_code + ".csv"
+    deal_dir(r"C:/l2data/202107/2021-07-09/")
