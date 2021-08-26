@@ -2,7 +2,7 @@
 import random
 import sys
 
-
+#
 all_account=[]#全部持股帐户 前4个为限售
 gdzs=0
 base_diretory="E:\\ts\\data"
