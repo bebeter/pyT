@@ -149,15 +149,15 @@ def deal_gp_fb(data_file, rq, stk_code):
     #print(sale_df[sale_df.iloc[:,2]>1])
     #成交价格有1个的单子
     df1= sale_df[sale_df[('Price','nunique')]<=1]
-    print(" 一个价位成交的金额总计：")
+    print(" 仅一个价位成交的金额总计：")#仅一个价位 说明没有推动价格变化
     print(df1[('vol','sum')].sum() )
     df2= df1[df1[('Volume','sum')]<100000]
-    print("小于10w手 一个价位 金额总计：")
+    print("小于10w股 仅一个价位 金额总计：")
     print(df2[('vol','sum')].sum() )
     #成交股数大有10w股的
     df2= df1[df1[('Volume','sum')]>=100000]
     #print(df2)
-    print("大于10w手 一个价位 金额总计：")
+    print("大于10w股 仅一个价位 金额总计：")
     print(df2[('vol','sum')].sum() )
 
 
@@ -216,8 +216,8 @@ def deal_gp_fb(data_file, rq, stk_code):
 
 def main():
     start =  time.perf_counter()
-    rq = '2021-05-12'
-    stk_code = '600733'
+    rq = '2021-07-09'
+    stk_code = '601156'
     fn = r"C:\Users\sun\Documents\2020-11-27\600733.csv"
 
     path = "C:/l2data/" +rq[0:4]+rq[5:7]+ "/" + rq+"/"

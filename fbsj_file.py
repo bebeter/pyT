@@ -457,15 +457,15 @@ def ceate_rows(my_dics):
 
 
 def main():
-    rq = '2020-11-07'
-    stk_code = '600733'
+    rq = '2021-07-09'
+    stk_code = '601156'
     fn = r"C:\Users\sun\Documents\2020-11-27\600733.csv"
 
-    path = r"C:/l2data/202007/" + rq + "/"
+    path = r"C:/l2data/202107/" + rq + "/"
 
     data_file = path+ stk_code + ".csv"
     #deal_gp(data_file,rq,stk_code)
-    data_file = r"C:\Users\sun\Documents\2020-11-27\600733.csv"
+    #data_file = r"C:\Users\sun\Documents\2020-11-27\600733.csv"
     deal_gp_fb(data_file, rq, stk_code)
 
 
